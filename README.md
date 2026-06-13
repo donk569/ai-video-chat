@@ -4,7 +4,7 @@
 >
 > 🏆 七牛云比赛作品 · 核心亮点：**端云协同成本控制**
 
-[![Demo](https://img.shields.io/badge/🎮-Live_Demo-cyan?style=for-the-badge)](#)
+[![Demo](https://img.shields.io/badge/🎮-Live_Demo-cyan?style=for-the-badge)](https://ai-video-chat-zeta.vercel.app)
 [![Next.js](https://img.shields.io/badge/Next.js-16-black?style=flat-square)](https://nextjs.org)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?style=flat-square)](https://www.typescriptlang.org)
 [![License](https://img.shields.io/badge/License-MIT-green?style=flat-square)](LICENSE)
@@ -13,7 +13,7 @@
 
 ## 🎮 在线体验
 
-> **Demo 地址**：部署中...
+> **Demo 地址**：[ai-video-chat-zeta.vercel.app](https://ai-video-chat-zeta.vercel.app)
 
 ---
 

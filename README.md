@@ -13,7 +13,13 @@
 
 ## 🎮 在线体验
 
-> **Demo 地址**：[ai-video-chat-zeta.vercel.app](https://ai-video-chat-zeta.vercel.app)
+👉 **[立即试用](https://ai-video-chat-zeta.vercel.app)** 
+
+## 🎬 Demo 演示
+
+<video src="demo/demo.mp4" controls width="100%" style="border-radius:12px"></video>
+
+> 将演示视频重命名为 `demo.mp4` 放入 `demo/` 文件夹即可在 README 中播放。
 
 ---
 

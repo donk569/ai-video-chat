@@ -13,15 +13,33 @@ export class WebSpeechSynthesizer {
 
   speak(text: string): Promise<TTSResult> {
     return new Promise((resolve, reject) => {
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.lang = this.lang;
-      utterance.rate = this.rate;
-      utterance.pitch = this.pitch;
+      // Split long text by sentence boundaries to avoid Chrome TTS cutoff
+      const sentences = text.match(/[^。！？.!?\n]+[。！？.!?\n]?/g) || [text];
+      // Merge very short fragments with neighbors to avoid choppy speech
+      const chunks: string[] = [];
+      for (const s of sentences) {
+        if (chunks.length > 0 && chunks[chunks.length - 1].length + s.length < 100) {
+          chunks[chunks.length - 1] += s;
+        } else {
+          chunks.push(s);
+        }
+      }
 
-      utterance.onend = () => resolve({ source: 'web-speech' });
-      utterance.onerror = () => reject(null);
-
-      window.speechSynthesis.speak(utterance);
+      let idx = 0;
+      const speakNext = () => {
+        if (idx >= chunks.length) {
+          resolve({ source: 'web-speech' });
+          return;
+        }
+        const utterance = new SpeechSynthesisUtterance(chunks[idx++]);
+        utterance.lang = this.lang;
+        utterance.rate = this.rate;
+        utterance.pitch = this.pitch;
+        utterance.onend = speakNext;
+        utterance.onerror = () => reject(null);
+        window.speechSynthesis.speak(utterance);
+      };
+      speakNext();
     });
   }
 

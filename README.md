@@ -17,9 +17,9 @@
 
 ## 🎬 Demo 演示
 
-<video src="demo/demo.mp4" controls width="100%" style="border-radius:12px"></video>
+👉 **[点击观看演示视频](demo/demo.mp4)**  
 
-> 将演示视频重命名为 `demo.mp4` 放入 `demo/` 文件夹即可在 README 中播放。
+> 右键「另存为」可下载到本地观看。
 
 ---
 

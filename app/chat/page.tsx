@@ -118,10 +118,11 @@ export default function Home() {
     }
   }, [voice.speaking]);
 
-  // When AI finishes speaking, restart voice recognition
+  // When AI finishes speaking, wait 500ms then restart voice recognition
   useEffect(() => {
     if (state === 'idle' && started && voice.isSupported) {
-      voice.start();
+      const timer = setTimeout(() => voice.start(), 500);
+      return () => clearTimeout(timer);
     }
   }, [state, started, voice.isSupported]);
 

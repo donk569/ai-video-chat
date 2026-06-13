@@ -7,7 +7,7 @@ export async function callQiniuVLM(
   history?: ConversationTurn[],
 ): Promise<VLMResponse> {
   const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 30000);
+  const timeoutId = setTimeout(() => controller.abort(), 10000); // 10s — Vercel hobby limit
 
   try {
     const response = await fetch('/api/vlm', {
@@ -18,17 +18,17 @@ export async function callQiniuVLM(
     });
 
     if (!response.ok) {
-      let errorMsg = '视觉理解服务异常';
+      let errorMsg = `VLM 请求失败 (${response.status})`;
       try {
         const errData = await response.json();
-        if (typeof errData?.error === 'string') {
+        if (typeof errData?.error === 'string' && errData.error) {
           errorMsg = errData.error;
         }
-      } catch { /* ignore */ }
+      } catch { /* use default */ }
       throw new VLMAPIError(errorMsg);
     }
 
-    const data: { answer: string; tokensUsed?: number } = await response.json();
+    const data = await response.json() as { answer: string; tokensUsed?: number };
 
     return {
       answer: data.answer,
@@ -36,14 +36,9 @@ export async function callQiniuVLM(
       tokensUsed: data.tokensUsed,
     };
   } catch (err: unknown) {
-    if (err instanceof VLMAPIError) {
-      throw err;
-    }
-    if (err instanceof DOMException && err.name === 'AbortError') {
-      throw new VLMTimeoutError();
-    }
-    // Network or other errors also surface as API errors
-    throw new VLMAPIError();
+    if (err instanceof VLMAPIError) throw err;
+    if (err instanceof DOMException && err.name === 'AbortError') throw new VLMTimeoutError();
+    throw new VLMAPIError(`网络请求失败: ${err instanceof Error ? err.message : '未知'}`);
   } finally {
     clearTimeout(timeoutId);
   }

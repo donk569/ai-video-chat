@@ -1,120 +1,107 @@
 # AI 视觉对话助手
 
-浏览器端 AI 视觉对话应用 — 打开摄像头与麦克风，AI 看到画面、听懂语音、用语音回答。
+> 浏览器端 AI 视觉对话应用 — 打开摄像头，AI 看见你的世界。开口即聊，AI 听懂你的声音。
+>
+> 🏆 七牛云比赛作品 · 核心亮点：**端云协同成本控制**
 
-> 七牛云比赛作品。核心亮点：**端云协同成本控制** — 端侧全链路优先，仅失败/复杂时才上云。
+[![Demo](https://img.shields.io/badge/🎮-Live_Demo-cyan?style=for-the-badge)](#)
+[![Next.js](https://img.shields.io/badge/Next.js-16-black?style=flat-square)](https://nextjs.org)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?style=flat-square)](https://www.typescriptlang.org)
+[![License](https://img.shields.io/badge/License-MIT-green?style=flat-square)](LICENSE)
 
-## 功能列表
+---
 
-- 摄像头实时画面捕获 + Canvas 截帧
-- 端侧帧去重（像素差异检测）
-- 麦克风拾音 + VAD 静音检测 + 自动分段
-- 语音转文字 (ASR)：Web Speech API → 七牛云 ASR 双路 fallback
-- 视觉理解 + 回答 (VLM)：LRU 缓存 → Transformers.js → 七牛云 VLM 三级 fallback
-- 文字转语音 (TTS)：Web Speech Synthesis → 七牛云 TTS 双路 fallback
-- 答案缓存：同类问题命中直接返回，不重复调 API
-- 端侧预处理：降分辨率 (max 640px) + JPEG 压缩 (q=0.6)
-- 低功耗模式：10s 无交互降帧率至 0.5fps
-- 对话历史（多轮上下文）
-- 文字聊天 fallback
-- 调试面板：帧率 / 延迟 / 云端调用次数 / Token 消耗 / 预估成本
+## 🎮 在线体验
 
-## 技术栈
+> **Demo 地址**：部署中...
 
-| 层 | 技术 |
+---
+
+## ✨ 功能
+
+| 功能 | 描述 | 状态 |
+|------|------|:--:|
+| 🎤 语音对话 | 开口说话，AI 实时倾听并用语音回应 | ✅ |
+| 💬 文字交流 | 打字也能流畅对话，支持中英文混输 | ✅ |
+| 📹 实时画面 | 摄像头全屏预览，沉浸式对话体验 | ✅ |
+| ⚡ 打断即停 | 说话或打字时 AI 自动停止播报，随时打断 | ✅ |
+| 🎯 状态反馈 | 聆听 / 思考 / 播报 实时动画指示 | ✅ |
+| 📊 成本追踪 | 云端调用次数 + Token 消耗 + 预估费用 | ✅ |
+| 🔇 低功耗 | 10 秒无交互自动降帧率至 0.5fps | ✅ |
+| 🗂️ 对话历史 | 多轮上下文，AI 记住之前说过的话 | ✅ |
+
+## 🏗️ 架构
+
+```
+用户说话 → Web Speech API 语音识别 → 七牛云 VLM (DeepSeek-V3) → Web Speech TTS 播报
+         ↘ 打字输入 ↘                              ↗ 文字回复
+```
+
+**6 层成本漏斗**：
+
+```
+原始 30fps 巨大 → 低功耗 0.5fps (60x) → 帧差去重 (10x)
+→ 降分辨率 640px (5x) → JPEG q=0.6 (10x) → 缓存命中 (0 tokens) → 云端仅必要时
+```
+
+## 🛠️ 技术栈
+
+| 层 | 方案 |
 |---|------|
-| Language | TypeScript 5.x (strict) |
-| Framework | Next.js 14 (App Router) |
-| Package manager | pnpm |
-| Testing | Vitest + React Testing Library |
-| Styling | Tailwind CSS |
-| State | React Context + useReducer |
-| 端侧 AI | Transformers.js |
-| 云端 AI | 七牛云 API (ASR / VLM / TTS) |
+| 框架 | Next.js 16 (App Router) + TypeScript 5 |
+| UI | Tailwind CSS 4 + Neo-Glass 设计 |
+| AI | 七牛云 DeepSeek-V3 + kvl-qwen2.5-vl-7b |
+| 语音 | Web Speech API (端侧) + 七牛云 ASR (云端兜底) |
+| 语音合成 | Web Speech Synthesis (端侧) + 七牛云 TTS (兜底) |
+| 缓存 | LRU 100 条答案缓存 |
 
-## 快速开始
+## 🚀 快速开始
 
 ```bash
-# 安装依赖
+git clone https://github.com/donk569/ai-video-chat.git
+cd ai-video-chat
 pnpm install
-
-# 配置环境变量
 cp .env.example .env.local
-# 编辑 .env.local，填入七牛云 API 配置
-
-# 开发模式启动
+# 编辑 .env.local 填入七牛云 API Key
 pnpm dev
 # 打开 http://localhost:3000
-
-# 运行测试
-pnpm test
-
-# 生产构建
-pnpm build
 ```
 
-## 环境变量
+## 🔑 环境变量
 
 ```env
-QINIU_ASR_URL=https://your-asr-endpoint
-QINIU_VLM_URL=https://your-vlm-endpoint
-QINIU_TTS_URL=https://your-tts-endpoint
-QINIU_API_KEY=your-api-key
+QINIU_API_KEY=sk-xxx          # 七牛 AI API Key
+QINIU_VLM_URL=https://...     # VLM 端点
+QINIU_TEXT_MODEL=deepseek-v3  # 文本模型
+QINIU_ACCESS_KEY=xxx          # Kodo 存储 AK (识图功能)
+QINIU_SECRET_KEY=xxx          # Kodo 存储 SK (识图功能)
+QINIU_BUCKET=xxx              # Kodo 存储桶 (识图功能)
 ```
 
-## 目录结构
+## 📁 目录结构
 
 ```
-├── app/                    # Next.js App Router
-│   ├── layout.tsx          # 根布局
-│   ├── page.tsx            # 主页面
-│   └── api/                # API 代理（隐藏 Key）
-│       ├── asr/route.ts    # 七牛云 ASR
-│       ├── vlm/route.ts    # 七牛云 VLM
-│       └── tts/route.ts    # 七牛云 TTS
+├── app/
+│   ├── page.tsx              # 产品主页 (Landing)
+│   ├── chat/page.tsx         # AI 对话页
+│   ├── layout.tsx            # 根布局
+│   └── api/                  # API 代理
+│       ├── asr/route.ts      # 七牛云 ASR 代理
+│       ├── vlm/route.ts      # 七牛云 VLM 代理
+│       └── tts/route.ts      # 七牛云 TTS 代理
 ├── modules/
-│   ├── shared/             # 类型、配置、错误类
-│   ├── camera/             # 摄像头 + 帧去重 + 压缩
-│   ├── audio/              # 麦克风 + VAD
-│   ├── asr/                # 语音识别（端→云）
-│   ├── vlm/                # 视觉模型（缓存→本地→云）
-│   ├── tts/                # 语音合成（端→云）
-│   └── orchestrator/       # 会话引擎 + 状态机 + 成本
-├── components/             # React UI 组件
-├── hooks/                  # React Hooks
-└── __tests__/              # 测试
+│   ├── shared/               # 类型、配置、错误类
+│   ├── camera/               # 摄像头 + 帧处理
+│   ├── audio/                # 麦克风 + VAD
+│   ├── asr/                  # 语音识别
+│   ├── vlm/                  # 视觉语言模型 + 缓存
+│   ├── tts/                  # 文字转语音
+│   └── orchestrator/         # 会话引擎 + 状态机
+├── components/               # React 组件 (7 个)
+├── hooks/                    # React Hooks (3 个)
+└── __tests__/                # 单元测试
 ```
 
-## 成本控制策略（6 层漏斗）
+## 📝 License
 
-```
-原始 30fps (巨大)
-  → Layer 1: 低功耗 0.5fps (~60x)
-  → Layer 2: 帧差去重 (~10x)
-  → Layer 3: 降分辨率 640px (~5x)
-  → Layer 4: JPEG q=0.6 (~10x)
-  → Layer 5: 答案缓存命中 (0 tokens)
-  → Layer 6: 本地模型 (0 tokens)
-  → 云端 API (仅必要时)
-```
-
-## Demo
-
-[Demo 视频](#) (待添加)
-
-## 依赖清单
-
-- next 14.x
-- react 19.x
-- react-dom 19.x
-- tailwindcss 4.x
-- @testing-library/react
-- @testing-library/jest-dom
-- vitest
-- jsdom
-- typescript 5.x
-- eslint 9.x
-
-## License
-
-MIT
+MIT © 2026

@@ -1,9 +1,9 @@
 import type { AudioChunk, CostStats, Message, VLMQuery, CompressedFrame, ConversationTurn } from '../shared/types';
 
 export interface PipelineDeps {
-  asr: { recognize(chunk: AudioChunk): Promise<{ text: string; source: string; confidence?: number; latencyMs: number }> };
-  vlm: { query(input: VLMQuery): Promise<{ answer: string; source: string; tokensUsed?: number }> };
-  tts: { speak(text: string): Promise<{ source: string }> };
+  asr: { recognize(chunk: AudioChunk): Promise<{ text: string; source: 'web-speech' | 'qiniu'; confidence?: number; latencyMs: number }> };
+  vlm: { query(input: VLMQuery): Promise<{ answer: string; source: 'cache' | 'local-model' | 'qiniu'; tokensUsed?: number }> };
+  tts: { speak(text: string): Promise<{ source: 'web-speech' | 'qiniu' }> };
 }
 
 export interface PipelineResult {

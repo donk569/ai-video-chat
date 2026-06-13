@@ -20,7 +20,7 @@ export function useVoiceInput(onResult: (text: string) => void) {
     recognition.continuous = true;
 
     // Track when audio is detected (non-standard props, use any cast)
-    const rec = recognition as Record<string, unknown>;
+    const rec = recognition as unknown as Record<string, unknown>;
     rec.onaudiostart = () => setSpeaking(true);
     rec.onaudioend = () => setSpeaking(false);
     rec.onsoundstart = () => setSpeaking(true);

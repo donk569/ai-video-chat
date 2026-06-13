@@ -52,7 +52,7 @@ export async function runPipeline(
     text: vlmResult.answer,
     frameDataUrl: frame.dataUrl,
     timestamp: Date.now(),
-    source: vlmResult.source,
+    source: vlmResult.source as Message['source'],
   };
 
   return { message, costDelta };

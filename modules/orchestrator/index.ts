@@ -129,14 +129,16 @@ export class Orchestrator {
         return; // no frame change, skip
       }
 
+      // Mute mic BEFORE TTS to prevent echo loop
+      this.stateMachine.transition('speaking');
+
       const result = await runPipeline(this.deps, chunk, frame, this.history);
 
-      this.history.push({ question: '', answer: result.message.text }); // question text from ASR is inside pipeline
+      this.history.push({ question: '', answer: result.message.text });
       if (this.history.length > 10) {
         this.history = this.history.slice(-10);
       }
 
-      // Update cost
       this.costStats.cloudCalls += result.costDelta.cloudCalls ?? 0;
       this.costStats.tokensUsed += result.costDelta.tokensUsed ?? 0;
       this.costStats.estimatedCostRMB += result.costDelta.estimatedCostRMB ?? 0;
@@ -145,8 +147,6 @@ export class Orchestrator {
       if (this.messages.length > 100) {
         this.messages = this.messages.slice(-50);
       }
-
-      this.stateMachine.transition('speaking');
 
       this.emit({ type: 'assistant_message', payload: result.message });
       this.emit({ type: 'cost_update', payload: this.getCostStats() });
@@ -208,6 +208,7 @@ export class Orchestrator {
       this.messages.push(assistantMessage);
 
       if (!this.cancelled) {
+        this.stateMachine.transition('speaking');
         await this.deps.tts.speak(vlmResult.answer);
       }
 

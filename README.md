@@ -2,7 +2,7 @@
 
 > 浏览器端 AI 视觉对话应用 — 打开摄像头，AI 看见你的世界。开口即聊，AI 听懂你的声音。
 >
-> 🏆 七牛云比赛作品 · 核心亮点：**端云协同成本控制**
+ 核心亮点：**端云协同成本控制**
 
 [![Demo](https://img.shields.io/badge/🎮-Live_Demo-cyan?style=for-the-badge)](https://ai-video-chat-zeta.vercel.app)
 [![Next.js](https://img.shields.io/badge/Next.js-16-black?style=flat-square)](https://nextjs.org)
@@ -56,7 +56,7 @@
 |---|------|
 | 框架 | Next.js 16 (App Router) + TypeScript 5 |
 | UI | Tailwind CSS 4 + Neo-Glass 设计 |
-| AI | 七牛云 DeepSeek-V3 + kvl-qwen2.5-vl-7b |
+| AI |  DeepSeek-V3 + kvl-qwen2.5-vl-7b |
 | 语音 | Web Speech API (端侧) + 七牛云 ASR (云端兜底) |
 | 语音合成 | Web Speech Synthesis (端侧) + 七牛云 TTS (兜底) |
 | 缓存 | LRU 100 条答案缓存 |
